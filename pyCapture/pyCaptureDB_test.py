@@ -1,10 +1,16 @@
 import numpy as np
 import glob,re
 
+#Identifying the path of this script in order to find the databases
+import inspect
+import os
+packagePath = os.path.dirname(inspect.stack()[0][1])
+
+
 #Defining Data Base Directories
-testDBDir="./testDB"
-rho1DBDir="./rho1DB"
-rhoPlusDBDir="./rhoPlusDB"
+testDBDir=packagePath + "/pyCaptureDBData/testDB"
+rho1DBDir=packagePath + "/pyCaptureDBData/rho1DB"
+rhoPlusDBDir=packagePath + "/pyCaptureDBData/rhoPlusDB"
 
 #Defining the numerical pattern to find files
 patternNum="[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?"

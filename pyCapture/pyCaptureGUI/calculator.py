@@ -1,8 +1,10 @@
-import sys
-sys.path.append('/Users/esp025/Dropbox/BiologicalPaper/PythonScripts/packages/pyCapture/captureDB')
 from tkinter import *
 from tkinter import ttk
-import captureDB as CDB
+
+#Loading modules from the pyCapture package
+import sys
+sys.path.append('/Users/esp025/Dropbox/BiologicalPaper/Python/pyCaptureDev')
+from pyCapture import pyCaptureDB as pyCDB
 
 def calculateNumbers(*args):
     try:
@@ -22,7 +24,7 @@ def calculateNumbers(*args):
             Reh=float(Reynolds.get())
             rph=float(particleSizeRatio.get())
             #etah=0.224*(Reh**0.718)*(rph**2.08)
-            etah,message=CDB.captureEfficiency(rp=rph,RE=Reh)
+            etah,message=pyCDB.captureEfficiency(rp=rph,RE=Reh)
             captureEfficiency.set(etah)
         elif radioDLess.get() == "Reynolds":
             etah=float(captureEfficiency.get())
