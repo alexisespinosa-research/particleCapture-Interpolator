@@ -23,8 +23,8 @@ def calculateNumbers(*args):
         if radioDLess.get() == "captureEfficiency":
             Reh=float(Reynolds.get())
             rph=float(particleSizeRatio.get())
-            #etah=0.224*(Reh**0.718)*(rph**2.08)
-            etah,message=pyCDB.captureEfficiency(rp=rph,RE=Reh)
+            rpArr,ReyArr,etaArr,message=pyCDB.captureEfficiencyEspinosa(rp=rph,Rey=Reh)
+            etah=etaArr[0]
             captureEfficiency.set(etah)
         elif radioDLess.get() == "Reynolds":
             etah=float(captureEfficiency.get())

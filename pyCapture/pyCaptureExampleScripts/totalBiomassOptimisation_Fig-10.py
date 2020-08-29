@@ -32,15 +32,43 @@ mass1 = math.pi*(Dc1**2/4)*h #The volume is a measure of the total biomass
 divisions = np.array([1,2,3,4,5]) #This array represents the division factor of the total biomass in each group
 NDivs = len(divisions)
 Dc = np.sqrt(np.divide(mass1,divisions)*4/h/math.pi)
-rp = np.divide(Dp,Dc)
-Rey = U*Dc/nu
+rpIn = np.divide(Dp,Dc)
+ReyIn = U*Dc/nu
+print("The relative particle sizes are rpIn:")
+print(rpIn)
+print("The Reynolds number are ReyIn:")
+print(ReyIn)
 
-#Obtain the capture efficiency for a collector in each group
+#Obtain the capture efficiency for a collector in each group (It may be less confusing to work element by element)
 Eff = np.full(divisions.shape,-1.0)
 for i in range (0,NDivs):
-    (EffHere,message) = pyCDB.captureEfficiency(rp=rp[i],RE=Rey[i])
-    Eff[i]=EffHere
-    print(Eff, message)
+    (rpOutHere,ReyOutHere,EffOutHere) = pyCDB.captureEfficiencyEspinosa(rp=rpIn[i],Rey=ReyIn[i])
+    Eff[i]=EffOutHere[0] #EffOutHere is a numpy array, even if it has only one element
+print("The capture efficiencies are Eff:")
+print(Eff)
+
+#Obtain the capture efficiency using the arrays directly in the function (we need to extract the desired values from output arrays)
+##(rpOut,ReyOut,EffOut) = pyCDB.captureEfficiencyEspinosa(rp=rpIn,Rey=ReyIn)
+##print("Note that rpIn and ReyIn are sorted within the function before estimating efficiency (this is a Python thing)")
+##print("rpIn:")
+##print(rpIn)
+##print("rpOut:")
+##print(rpOut)
+##print("ReyIn:")
+##print(ReyIn)
+##print("ReyOut:")
+##print(ReyOut)
+##print("And this is the efficiency array (in the order used by the function)")
+##print("EffOut:")
+##print(EffOut)
+##print("Then, elements needed are EffOut[4,0],EffOut[3,1],EffOut[2,2],EffOut[1,3],EffOut[0,4]")
+##Eff = np.full(divisions.shape,-1.0)
+##for i in range (0,NDivs):
+##    rpI=np.where(rpOut==rpIn[i])
+##    ReyI=np.where(ReyOut==ReyIn[i])
+##    Eff[i]=EffOut[ReyI,rpI]
+##print("The capture efficiencies are Eff:")
+##print(Eff)
 
 #Obtain the volumetric capture rates
 CapVol = h*U*(np.multiply(Dc,Eff)) #Volumetric capture for a collector 
