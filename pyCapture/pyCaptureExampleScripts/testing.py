@@ -5,8 +5,6 @@ import sys
 sys.path.append('/Users/esp025/Dropbox/BiologicalPaper/Python/pyCaptureDev')
 from pyCapture import pyCaptureDB as pyCDB
 
-#eta,message=pyCDB.captureEfficiencyTest(rp=0.0075,Rey=950)
-
 #Testing estimates using arrays as incoming values for the function
 #Note that output variables are numpy arrays
 rpInA=np.array([0.1, 1.5, 0.7, 0.5])

@@ -8,7 +8,6 @@ import os
 packagePath = os.path.dirname(inspect.stack()[0][1])
 
 #Defining Data Base Directories
-testDBDir=packagePath + "/pyCaptureDBData/testDB"
 rho1DBDir=packagePath + "/pyCaptureDBData/rho1DB"
 rhoPlusDBDir=packagePath + "/pyCaptureDBData/rhoPlusDB"
 
