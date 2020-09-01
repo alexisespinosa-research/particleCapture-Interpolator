@@ -113,7 +113,8 @@ titleBG='lightgreen'
 instructionsBG='red'
 normalBG='white'
 disabledBG='grey90'
-answerBG='lemon chiffon'
+#answerBG='lemon chiffon'
+answerBG='yellow'
     #Foreground colors
 normalFG='black'
 disabledFG='gray60'
@@ -159,13 +160,14 @@ rowWindow=0
 #Internal title row
 rowWindow+=1
 reTitle_text=Message(mainframe,text=root.title())
-reTitle_text.configure(font=titleFont,width=messageWidth,bg=titleBG)
+#reTitle_text.configure(font=titleFont,width=messageWidth,bg=titleBG)
+reTitle_text.configure(width=messageWidth,bg=titleBG)
 reTitle_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #First Instructions row
 rowWindow+=1
 instructions1_text=Message(mainframe,text="Fill in the parameters: Reynolds number and Particle Size Ratio. Then click the \"Calculate\" button.")
-instructions1_text.configure(font=instructionsFont,width=messageWidth,bg=instructionsBG)
+instructions1_text.configure(width=messageWidth,bg=instructionsBG)
 instructions1_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #Settings for the "Reynolds" row
@@ -200,7 +202,7 @@ calc_button.grid(row=rowWindow,column=2,sticky=N)
 #Second Instructions row
 rowWindow+=1
 instructions2_text=Message(mainframe,text="To use dimensional variables, activate the check button. Enter all the dimensional variables below. Then click the \"Calculate\" button.")
-instructions2_text.configure(font=instructionsFont,width=messageWidth,bg=instructionsBG)
+instructions2_text.configure(width=messageWidth,bg=instructionsBG)
 instructions2_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #Unit parameters check button row
@@ -246,7 +248,7 @@ fluidViscosity_entry.grid(row=rowWindow,column=2,sticky=W)
 #Third Instructions row
 rowWindow+=1
 instructions3_text=Message(mainframe,text="To estimate dynamic rates, activate the check button. Fill all the dimensional variables above and the Collector Height and Particle concentration below. Then click the \"Calculate\" button.")
-instructions3_text.configure(font=instructionsFont,width=messageWidth,bg=instructionsBG)
+instructions3_text.configure(width=messageWidth,bg=instructionsBG)
 instructions3_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #Dynamic rates check button row
