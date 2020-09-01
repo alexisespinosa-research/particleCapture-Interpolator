@@ -37,17 +37,30 @@ This is a simple Graphic User Interface built with Tkinter. By executing the `ca
 
 1. Install Python-3 on your computer (look for instructions elsewhere). 
 2. Install a GIT client on your computer (look for instructions elsewhere). We recommend to use the tool: "GitHub Desktop".
-3. Clone this repository into your computer. If using the command line, use: `git clone https://github.com/alexisespinosa-research/pyCaptureDev`
-4. Install all the Python dependencies indicated above. We have used `pip` for the installation of the dependencies. For example (from a command prompt in windows):
+3. Clone this repository into your computer. If using the command line, use:
+```
+git clone https://github.com/alexisespinosa-research/pyCaptureDev
+```
 
+4. Install all the Python dependencies indicated above. We have used `pip` for the installation of the dependencies. For example (from a command prompt in windows):
 ```
 py -m pip install numpy scipy matplotlib
 ```
-5. Execute the `calculatorGUI.py` or any of the example scripts
+
+5. Execute the `calculatorGUI.py` to obtain estimates. Or inspect and execute any of the example scripts.
 
 
 ## For Mac or Linux:
-1. Install Python-3 (and the package manager pip3) on your computer  (You can use any other package manager.) Look for instructions elsewhere. 
+1. Install Python-3 on your computer (look for instructions elsewhere). 
 2. Install a GIT client on your computer (look for instructions elsewhere).
-3. Clone this repository into your computer. If using the command line, use: `git clone https://github.com/alexisespinosa-research/pyCaptureDev`
-4. 
+3. Clone this repository into your computer. If using the command line, use:
+```
+git clone https://github.com/alexisespinosa-research/pyCaptureDev
+```
+
+4. Install all the Python dependencies indicated above. We have used `pip` for the installation of the dependencies. For example (from a command prompt in windows):
+```
+python3 -m pip install numpy scipy matplotlib
+```
+
+5. Execute the `calculatorGUI.py` to obtain estimates. Or inspect and execute any of the example scripts.

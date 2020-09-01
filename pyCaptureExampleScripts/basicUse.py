@@ -40,6 +40,9 @@ reynoldsInA=100
 print('--------------------------------------------------------')
 print('Testing the estimates when using just single scalars')
 print('--------------------------------------------------------')
+print('.')
+print('.')
+input('PRESS ENTER TO CONTINUE')
 print('This was the incoming reynoldsInA=')
 print(reynoldsInA)
 print('And this was the actual reynoldsOutA array used internally by the function, reynoldsOutA=')
@@ -54,6 +57,8 @@ print('etaOutA=')
 print(etaOutA)
 print('.')
 print('.')
+input('PRESS ENTER TO CONTINUE')
+
 
 #Testing estimates using arrays as incoming values for the function
 #Note that output variables are numpy arrays
@@ -68,6 +73,8 @@ print('Notice that python interpolator sorts the incoming values before returnin
 print('This is an intrinsic operation of the scipy.interpolate.interp2d')
 print('--------------------------------------------------------')
 print('.')
+print('.')
+input('PRESS ENTER TO CONTINUE')
 print('So this was the incoming rpInB=')
 print(rpInB)
 print('And this was the actual rp array used within the function (sorted), rpOutB=')
@@ -92,5 +99,8 @@ print('So, the value we are looking for is in etaOutB[2ndReynolds when ordered,4
 print('remember that in Python, indexes start in count 0, so 2nd is index 1 and 4th is index 3')
 print('i.e. etaOutB[1,3]=')
 print(etaOutB[1,3])
+print('.')
+print('.')
+input('PRESS ENTER TO CONTINUE')
 
 
