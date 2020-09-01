@@ -24,7 +24,7 @@ import os
 scriptPath = os.path.dirname(inspect.stack()[0][1])
 
 #Defining the path to add to python in order to recognize the pyCapture package:
-pyCapturePath=scriptPath + '/../../../pyCaptureDev' #Definition as relative path to this script
+pyCapturePath=scriptPath + '/../../pyCaptureDev' #Definition as relative path to this script
 #pyCapturePath='/Users/esp025/Dropbox/BiologicalPaper/Python/pyCaptureDev' #Definition as absolute path in your own computer
 
 #Loading modules from the pyCapture package
