@@ -32,7 +32,7 @@ lnReynoldsDataY = np.log(reynoldsDataY)
 etaCFD = interpolate.interp2d(rpDataX,lnReynoldsDataY,efficiencyDataZ,kind='cubic',fill_value=-16.0)
 
 #defining the interpolation function for captureEfficiency
-def captureEfficiencyEspinosa(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarray,np.ndarray):
+def captureEfficiencyDI(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarray,np.ndarray):
     #Checking type for rp
     if isinstance(rp, np.ndarray):
         #print('Incoming rp is a numpy array')
