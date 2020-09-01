@@ -172,14 +172,14 @@ instructions1_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #Settings for the "Reynolds" row
 rowWindow+=1
-Reynolds_label=ttk.Label(mainframe,text="Reynolds [-]")
+Reynolds_label=ttk.Label(mainframe,text="Reynolds [-]. Valid range: (0,1000]")
 Reynolds_label.grid(row=rowWindow,column=1,sticky=W)
 Reynolds_entry=tk.Entry(mainframe,width=16,textvariable=Reynolds,background=normalBG,state='normal')
 Reynolds_entry.grid(row=rowWindow,column=2,sticky=W)
 
 #Settings for the "particleSizeRatio" row
 rowWindow+=1
-particleSizeRatio_label=ttk.Label(mainframe,text="particleSizeRatio [-]")
+particleSizeRatio_label=ttk.Label(mainframe,text="particleSizeRatio [-]. Valid range: [0,1.5]")
 particleSizeRatio_label.grid(row=rowWindow,column=1,sticky=W)
 particleSizeRatio_entry=tk.Entry(mainframe,width=16,textvariable=particleSizeRatio,background=normalBG,state='normal')
 particleSizeRatio_entry.grid(row=rowWindow,column=2,sticky=W)

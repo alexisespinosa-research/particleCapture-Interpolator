@@ -19,6 +19,8 @@ The function can give estimates of capture efficiency for `0<Rey<=1000` and `0<=
 
 ### The "pyCaptureExampleScripts"
 The script examples in this directory show how to use the `pyCaptureDB.captureEfficiencyDI` function.
+The script `basicUse.py` provides a basic explanation of use.
+The script `totalBiomassOptimisation_Fig-10.py` provides a more elaborated use and reproduces the Fig-10 of the manuscript.
 
 ### The "pyCaptureCalculatorGUI"
 This is a simple Graphic User Interface built with Tkinter. By executing the `calculatorGUI.py`, users can input different variables or parameters for obtaining estimates of Capture Efficiency and Particle Capture Rate. The tool uses the `pyCaptureDB.captureEfficiencyDI` function.
@@ -35,7 +37,7 @@ This is a simple Graphic User Interface built with Tkinter. By executing the `ca
 
 ## For Windows:
 
-1. Install Python-3 on your computer (look for instructions elsewhere). 
+1. Install Python-3 on your computer (look for instructions elsewhere). Any version (like 3.x.x) should work fine. 
 2. Install a GIT client on your computer (look for instructions elsewhere). We recommend to use the tool: "GitHub Desktop".
 3. Clone this repository into your computer. If using the command line, use:
 ```
@@ -51,7 +53,7 @@ py -m pip install numpy scipy matplotlib
 
 
 ## For Mac or Linux:
-1. Install Python-3 on your computer (look for instructions elsewhere). 
+1. Install Python-3 on your computer (look for instructions elsewhere). Any version (like 3.x.x) should work fine.
 2. Install a GIT client on your computer (look for instructions elsewhere).
 3. Clone this repository into your computer. If using the command line, use:
 ```

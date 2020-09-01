@@ -1,3 +1,17 @@
+"""
+=================
+This module pyCaptureDB contains the database from the CFD simulations
+for particle capture.
+It also contains the function:
+pyCaptureDB.captureEfficiencyDI
+for estimating capture efficiency by direct interception
+
+This tool has been provided as additional material of the journal paper:
+Espinosa-Gayosso A., Ghisalberti M., Shimeta J. & Ivey G.N. "On predicting particle capture rates in aquatic systems"
+Submited to PLOSOne on September2020.
+=================
+"""
+
 import numpy as np
 from scipy import interpolate
 import glob,re
@@ -31,6 +45,31 @@ lnReynoldsDataY = np.log(reynoldsDataY)
 #etaLNRey_I2D = interpolate.interp2d(rpDataX,lnReynoldsDataY,efficiencyDataZ,kind='cubic') #Chosen one
 etaCFD = interpolate.interp2d(rpDataX,lnReynoldsDataY,efficiencyDataZ,kind='cubic',fill_value=-16.0)
 
+"""
+=================
+The following function:
+pyCaptureDB.captureEfficiencyDI
+
+The function Receives two input arguments:
+-rp (which is the particle size ratio)
+-Rey (which is the Reynolds number)
+These can be numpy arrays, lists or single scalars. If the input is not an array,
+it is converted into a numpy array internally and sorted.
+
+The accepted values for rp are in the range [0,1.5]
+The accepted values for Rey are in the range (0,1000]
+
+The function Returns three numpy arrays:
+-rp (internal numpy array, sorted)
+-Rey (internal numpy array, sorted)
+-eta (which is the capture efficiency by direct interception) (result of the interpolation)
+
+Internally, the function uses etaCFD (defined above) which is the interpolate function defined with
+scipy.interpolate.interp2d
+This method sorts the input arrays by default before performing the interpolation
+and that is why our function returns the sorted arrays.
+=================
+"""
 #defining the interpolation function for captureEfficiency
 def captureEfficiencyDI(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarray,np.ndarray):
     #Checking type for rp

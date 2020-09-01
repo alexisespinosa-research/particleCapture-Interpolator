@@ -14,6 +14,33 @@ For a more elaborated usage example, check the script "totalBiomassOptimisation_
 
 For an easy to use Graphical User Interface, execute "calculatorGUI.py"
 """
+
+"""
+=================
+Explanation of the function:
+pyCaptureDB.captureEfficiencyDI
+
+The function Receives two input arguments:
+-rp (which is the particle size ratio)
+-Rey (which is the Reynolds number)
+These can be numpy arrays, lists or single scalars. If the input is not an array,
+it is converted into a numpy array internally and sorted.
+
+The accepted values for rp are in the range [0,1.5]
+The accepted values for Rey are in the range (0,1000]
+
+The function Returns three numpy arrays:
+-rp (internal numpy array, sorted)
+-Rey (internal numpy array, sorted)
+-eta (which is the capture efficiency by direct interception) (result of the interpolation)
+
+Internally, the function uses etaCFD (defined above) which is the interpolate function defined with
+scipy.interpolate.interp2d
+This method sorts the input arrays by default before performing the interpolation
+and that is why our function returns the sorted arrays.
+=================
+"""
+
 #Import needed dependencies
 import numpy as np
 
