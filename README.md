@@ -37,7 +37,7 @@ This is a simple Graphic User Interface built with Tkinter. By executing the `ca
 
 ## For Windows:
 
-1. Install Python-3 on your computer (look for instructions elsewhere). Any version (like 3.x.x) should work fine. 
+1. Install Python-3 on your computer (look for instructions elsewhere). [Python releases for windows.](https://www.python.org/downloads/windows/) Any version (like 3.x.x) should work fine. 
 2. Install a GIT client on your computer (look for instructions elsewhere). We recommend to use the tool: "GitHub Desktop".
 3. Clone this repository into your computer. If using the command line, use:
 ```
@@ -50,6 +50,16 @@ py -m pip install numpy scipy matplotlib
 ```
 
 5. Execute the `calculatorGUI.py` to obtain estimates. Or inspect and execute any of the example scripts.
+
+For reading the scripts we usually open them with IDLE and later execute them from the IDLE Run menu.
+If you only want to execute them, you can also double click them directly from the windows explorer.
+You can also execute them from the command line with:
+
+```
+py toolOrScript-to-execute.py
+```
+
+If the scripts or the calculatorGUI sends a message/error, it will be displayed on the Python screen that will open when executing the tools.
 
 
 ## For Mac or Linux:
@@ -66,3 +76,18 @@ python3 -m pip install numpy scipy matplotlib
 ```
 
 5. Execute the `calculatorGUI.py` to obtain estimates. Or inspect and execute any of the example scripts.
+
+For reading the scripts we usually open them with IDLE and later execute them from the IDLE Run menu.
+You can also execute them from the command line with:
+
+```
+python3 toolOrScript-to-execute.py
+```
+
+If the scripts or the calculatorGUI sends a message/error, it will be displayed on the Python screen that will open when executing the tools.
+
+## Setting the path for the pyCapture package
+
+Currently, the tools/scripts provided will find the right path of the package `pyCapture` as a relative path to the scripts in the repository. This is performed with the use of the function `sys.path.append` within the scripts. This allow the scripts/tools to find the package and work properly. Nevertheless, the `pyCapture` package has not been installed as a package ready to be used by any other python application.  
+
+If you decide to change the relative paths between the package and the scripts, for example when writing your own python tool that will make use of pyCapture, then you will need to re-define the path of the pyCapture package inside your script. You can also make use of the different methods available to allow python scripts to find and import packages. For example, we recommend the use of a [path configuration file.](https://docs.python.org/3/library/site.html)

@@ -21,9 +21,8 @@ import math
 import numpy as np
 
 #Identifying the path of this script in order to load pyCapture
-import inspect
 import os
-scriptPath = os.path.dirname(inspect.stack()[0][1])
+scriptPath = os.getcwd()
 
 #Defining the path to add to python in order to recognize the pyCapture package:
 pyCapturePath=scriptPath + '/../../pyCaptureDev' #Definition as relative path to this script
@@ -132,3 +131,7 @@ plt.xticks(divisions,divisions)
 plt.xlabel('Number of divisions')
 plt.title('Advantage of multiple collectors while keeping total biomass constant')                
 plt.show()
+
+print('.')
+print('.')
+input('PRESS ENTER TO CONTINUE')

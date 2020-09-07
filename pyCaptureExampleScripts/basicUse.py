@@ -45,9 +45,9 @@ and that is why our function returns the sorted arrays.
 import numpy as np
 
 #Identifying the path of this script in order to load pyCapture
-import inspect
+#import inspect
 import os
-scriptPath = os.path.dirname(inspect.stack()[0][1])
+scriptPath = os.getcwd()
 
 #Defining the path to add to python in order to recognize the pyCapture package:
 pyCapturePath=scriptPath + '/../../pyCaptureDev' #Definition as relative path to this script
