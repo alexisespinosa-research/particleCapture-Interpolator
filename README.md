@@ -10,7 +10,7 @@ Espinosa-Gayosso A., Ghisalberti M., Shimeta J. & Ivey G.N.
 Submited to PLOSOne on September2020.
 ```
 ### The "pyCapture" package
-This package is under the folder `pyCapture`. It contains the database generated from CFD simulations. It also contains the function for estimating the capture efficiency by direct interception:
+This package is under the folder `pyCapture`. It contains the database generated from the CFD simulations described in the reference. It also contains the function for estimating the capture efficiency by direct interception:
 
 ```
 pyCaptureDB.captureEfficiencyDI
