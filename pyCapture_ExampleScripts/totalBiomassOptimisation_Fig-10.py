@@ -3,12 +3,15 @@
 Example of the use of the python function for estimates of capture efficiency by direct interception:
 pyCaptureDB.captureEfficiencyDI
 
+This example recreates the analysis for optimising the distribution of biomass of capturing structures.
+And re-creates Fig.10 from the manuscript.
+
 This tool has been provided as additional material of the journal paper:
 Espinosa-Gayosso A., Ghisalberti M., Shimeta J. & Ivey G.N. "On predicting particle capture rates in aquatic systems"
 Submited to PLOSOne on September2020.
 =================
 
-This example recreates the Fig.10 from the manuscript.
+
 
 For a basic example on how to use the function, check the script "basicUse.py"
 
@@ -34,7 +37,7 @@ sys.path.append(pyCapturePath)
 from pyCapture import pyCaptureDB
 
 #Define constant parameters as described in the manuscript
-Dc1 = 100E-6 #[m] #Collector diameter for the single collector with the total mass (no divisions)
+Dc1 = 100E-6 #[m] #Collector diameter for the single collector with the total biomass (no divisions)
 Dp = 25E-6 #[m] # Constant particle size (same for all groups)
 U = 0.06 #[m/s] #Incoming velocity (same for all groups)
 
@@ -48,28 +51,52 @@ rhoCollector = 1020 #[kg/m^3] #Density of the collector material (same for all g
 
 #Estimate parameters from the problem definition above
 Rey1 = U*Dc1/nu #[-] #Reynolds number for the single collector with the total mass (no divisions)
+rp1 = Dp/Dc1 #[-] #Particle size ratio for the single collector with the total mass (no divisions)
 totalVolume = math.pi*(Dc1**2/4)*h # [m^3] #Constant total volume (same for all groups)
 totalMass = rhoCollector*totalVolume #[kg] #Constant total mass (same for all groups)
 
+#Printing the initial settings
+print("Upstream velocity:")
+print(U)
+print("Size of particles in suspension:")
+print(Dp)
+print("The diameter of a first single collector with all the biomass:")
+print(Dc1)
+print("The height of a first single collector with all the biomass:")
+print(h)
+print("Total biomass:")
+print(totalMass)
+print("The Reynolds number of a first single collector with all the biomass:")
+print(Rey1)
+print("The Particle Size Ratio of a first single collector with all the biomass:")
+print(rp1)
+print('.')
+print('.')
+input('PRESS ENTER TO CONTINUE')
+
+
 #Obtain arrays of the values for groups of collectors with same total constant biomass
 divisions = np.array([1,2,3,4,5]) #This array represents the division factor of the total biomass in each group
-print("The number of divisions (collectors) keeping original total mass constant, divisions=")
+print("The number of divisions (or number of collectors) keeping original total biomass constant, divisions=")
 print(divisions)
 NDivs = len(divisions)
 Dc = np.sqrt(np.divide(totalVolume,divisions)*4/h/math.pi) #Array with diameters of collector of each group after division
-rpIn = np.divide(Dp,Dc) #Array with the particleSizeRatio that varies for each group depending on the diameter of the collector
-print("The particle size ratios are rpIn=")
-print(rpIn)
 ReyIn = U*Dc/nu #Array with the Reynolds number for each group depending on the diameter of the collector
-print("The Reynolds numbers are ReyIn=")
+print("The Reynolds numbers corresponding to these divisions are ReyIn=")
 print(ReyIn)
+rpIn = np.divide(Dp,Dc) #Array with the particleSizeRatio that varies for each group depending on the diameter of the collector
+print("The particle size ratios corresponding to these divisions are, rpIn=")
+print(rpIn)
 
-#Obtain the capture efficiency for a collector in each group (It may be less confusing to work element by element)
+
+#Obtain the capture efficiency for a collector in each group
+#It may be less confusing to work element by element, because when working with arrays, the estimating function re-sorts
+#the input arrays
 Eff = np.full(divisions.shape,-1.0)
 for i in range (0,NDivs):
     (rpOutHere,ReyOutHere,EffOutHere) = pyCaptureDB.captureEfficiencyDI(rp=rpIn[i],Rey=ReyIn[i])
-    Eff[i]=EffOutHere[0] #EffOutHere is a numpy array, even if it has only one element
-print("The capture efficiencies are Eff=")
+    Eff[i]=EffOutHere[0,0] #EffOutHere is a numpy array, even if it has only one element
+print("The capture efficiencies using just ONE collector of each group are, Eff=")
 print(Eff)
 
 #(Or:)
@@ -99,13 +126,15 @@ print(Eff)
 #Obtain the volumetric capture rates
 CR = Cp*h*U*(np.multiply(Dc,Eff)) #Capture Rate for one collector in each group
 CRNorm = np.divide(CR,CR[0]) #Normalised capture with respect to the total mass with just 1 palp (no division)
-print('The normalised capture rates for a single collector are, CRNorm=')
+print('The normalised capture rates using just ONE collector of each group (squares in the following plot) are, CRNorm=')
 print(CRNorm)
 CRGroup = np.multiply(CR,divisions) #Capture Rate for the whole group (all collectors with group total mass constant)
 CRGroupNorm = np.multiply(CRNorm,divisions) #Normalised capture for the group
-print('The normalised capture rates for the whole group are, CRGroupNorm=')
+print('The normalised capture rates considering the complete groups with SAME total biomass (triangles in the following plot), CRGroupNorm=')
 print(CRGroupNorm)
-
+print('.')
+print('.')
+input('PRESS ENTER TO CREATE THE PLOT')
 #Create a list of arrays with the values for each stack bar level
 CapByPalps = []
 for i in range (0,NDivs):

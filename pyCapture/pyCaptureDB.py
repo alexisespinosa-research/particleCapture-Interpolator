@@ -32,8 +32,8 @@ reynoldsDataY = np.genfromtxt(rho1DBDir + "/reynoldsDataY.csv", delimiter=',')
 
 #Obtaining the logarithmic axis
 #log10RpDataX = np.log10(rpDataX)
-log10ReynoldsDataY = np.log10(reynoldsDataY)
-lnReynoldsDataY = np.log(reynoldsDataY)
+#log10ReynoldsDataY = np.log10(reynoldsDataY[1:])
+lnReynoldsDataY = np.log(reynoldsDataY[1:])
 
 #Obtaining the interpolation function
 #etaL_RBS = interpolate.RectBivariateSpline(log10RpDataX,log10ReynoldsDataY,np.transpose(efficiencyDataZ))
@@ -43,7 +43,7 @@ lnReynoldsDataY = np.log(reynoldsDataY)
 #etaLRey_RBS = interpolate.RectBivariateSpline(rpDataX,log10ReynoldsDataY,np.transpose(efficiencyDataZ))
 #etaLRey_I2D = interpolate.interp2d(rpDataX,log10ReynoldsDataY,efficiencyDataZ,kind='cubic')
 #etaLNRey_I2D = interpolate.interp2d(rpDataX,lnReynoldsDataY,efficiencyDataZ,kind='cubic') #Chosen one
-etaCFD = interpolate.interp2d(rpDataX,lnReynoldsDataY,efficiencyDataZ,kind='cubic',fill_value=-16.0)
+etaCFD = interpolate.interp2d(rpDataX,lnReynoldsDataY,efficiencyDataZ[1:,:],kind='cubic',fill_value=-16.0)
 
 """
 =================
@@ -53,21 +53,22 @@ pyCaptureDB.captureEfficiencyDI
 The function Receives two input arguments:
 -rp (which is the particle size ratio)
 -Rey (which is the Reynolds number)
-These can be numpy arrays, lists or single scalars. If the input is not an array,
-it is converted into a numpy array internally and sorted.
+These input arguments can be numpy arrays, lists or single scalars. If the input is not an array,
+it is converted into a numpy array internally and sorted before any estimate is done.
 
 The accepted values for rp are in the range [0,1.5]
-The accepted values for Rey are in the range (0,1000]
+The accepted values for Rey are in the range [0,1000]
 
 The function Returns three numpy arrays:
--rp (internal numpy array, sorted)
--Rey (internal numpy array, sorted)
--eta (which is the capture efficiency by direct interception) (result of the interpolation)
+-rp (internally created and sorted 1D numpy array of given Particle Size Ratios)
+-Rey (internally created and sorted 1D numpy array of given Reynolds numbers)
+-eta (resulting 2D numpy array of estimates of capture efficiency by direct interception from the sorted rp and Rey)
+IMPORTANT: The resulting eta array is always a 2D array
 
 Internally, the function uses etaCFD (defined above) which is the interpolate function defined with
 scipy.interpolate.interp2d
-This method sorts the input arrays by default before performing the interpolation
-and that is why our function returns the sorted arrays.
+This native python method sorts "by force" the input arrays by default before performing the interpolation,
+and this is the reason why our function also returns the sorted arrays (for user information).
 =================
 """
 #defining the interpolation function for captureEfficiency
@@ -101,7 +102,7 @@ def captureEfficiencyDI(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarr
     rp=rp*1.0
     Rey=Rey*1.0
 
-    #Sorting rp and Reynolds (because the interpolating algorthm sorts the input arrays anyway)
+    #Sorting rp and Reynolds (because the interpolating algorithm sorts the input arrays anyway)
     #So, it is better to have them as they are going to be used
     rp = np.sort(rp)
     Rey = np.sort(Rey)
@@ -114,10 +115,10 @@ def captureEfficiencyDI(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarr
         errorMessage="Particle size ratio rp="+str(rp)+" is below the accepted range: rp should be in [0," + str(np.max(rpDataX)) +"]. Capture efficiency can't be estimated"
         raise TypeError(errorMessage)
     if (Rey>np.max(reynoldsDataY)).all():
-        errorMessage="Reynolds number Rey="+str(Rey)+" is above the accepted range: Reynolds should be in (0," + str(np.max(reynoldsDataY)) +"]. Capture efficiency can't be estimated"
+        errorMessage="Reynolds number Rey="+str(Rey)+" is above the accepted range: Reynolds should be in [0," + str(np.max(reynoldsDataY)) +"]. Capture efficiency can't be estimated"
         raise TypeError(errorMessage)
-    if (Rey<=0.0).all():
-        errorMessage="Reynolds number Rey="+str(Rey)+" is below the accepted range: Reynolds should be in (0," + str(np.max(reynoldsDataY)) +"]. Capture efficiency can't be estimated"
+    if (Rey<0.0).all():
+        errorMessage="Reynolds number Rey="+str(Rey)+" is below the accepted range: Reynolds should be in [0," + str(np.max(reynoldsDataY)) +"]. Capture efficiency can't be estimated"
         raise TypeError(errorMessage)
 
     #AEG. To be removed/commented after test
@@ -126,28 +127,34 @@ def captureEfficiencyDI(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarr
     #print("reynoldsDataY is:")
     #print(reynoldsDataY)
 
+    #Hiding the zero values for Rey and rp for the interpolation (return to zero values will be done in the final correction)
+    maskRey00 = (Rey == 0.0)*reynoldsDataY[1]
+    useRey=Rey+maskRey00
+    maskRp00 = (rp == 0.0)*rpDataX[1]
+    useRp=rp+maskRp00
+
     #Estimating capture efficiency
-    lnRey = np.log(Rey)
-    eta = etaCFD(rp,lnRey)
+    lnRey = np.log(useRey)
+    eta = etaCFD(useRp,lnRey)
     
     #AEG. To be removed/commented after test. Obtaining the capture efficiency interpolated on the logarithmic axis both reynolds and rp
     #log10Rey = np.log10(Rey)   
     #print("etaCFD = ", etaCFD(rp,lnRey))
     #print("etaLNRey_I2D = ", etaLNRey_I2D(rp,lnRey))
     #print("etaLRey_I2D = ", etaLRey_I2D(rp,log10Rey))
-    #print("etaLRey_RBS = ", np.transpose(etaLRey_RBS(rp,np.transpose(log10Rey))))    
+    #print("etaLRey_RBS = ", np.transpose(etaLRey_RBS(rp,np.transpose(log10Rey))))
 
     #When estimates are for very low Reynolds, use the creeping flow formulation
-    if (Rey < np.min(reynoldsDataY)).any():
+    if (Rey < reynoldsDataY[1]).any():
         #Creating the XX,YY masks
-        maskRp = np.full(rp.shape,1.0)
-        maskReyLower = (Rey < np.min(reynoldsDataY))*1.0
-        maskReyHigher = (Rey >= np.min(reynoldsDataY))*1.0
+        maskRp = np.full(useRp.shape,1.0)
+        maskReyLower = (useRey < reynoldsDataY[1])*1.0
+        maskReyHigher = (useRey >= reynoldsDataY[1])*1.0
         maskRpXX, maskReyLowerYY = np.meshgrid(maskRp,maskReyLower)
         maskRpXX, maskReyHigherYY = np.meshgrid(maskRp,maskReyHigher)
 
         #Applying the formula to the meshgridded values
-        rpXX, ReyYY = np.meshgrid(rp,Rey)
+        rpXX, ReyYY = np.meshgrid(useRp,useRey)
         lnReyYY = np.log(ReyYY)
         fR = 0.953 * np.log(6.25 + ReyYY) -1.62
         kR = 0.872 * np.log(19.1 + ReyYY) -1.92
@@ -158,18 +165,11 @@ def captureEfficiencyDI(rp: np.ndarray, Rey: np.ndarray) -> (np.ndarray,np.ndarr
         eta=np.multiply(eta,maskReyHigherYY)
         eta=eta+etaZZ
 
-
-    #Correcting to exact zeros for those etas with rp=0.0
-    if (rp == 0.0).any():
-        maskRp = (rp != 0.0)*1.0;
-        maskRey = np.full(Rey.shape,1.0);
-        maskRpXX, maskReyYY = np.meshgrid(maskRp,maskRey)
-        eta = np.multiply(eta,maskRpXX)
+    #Correcting to exact zeros for those etas with rp=0.0 or Rey=0.0
+    maskRp = (rp != 0.0)*1.0;
+    maskRey = (Rey != 0.0)*1.0;
+    maskRpXX, maskReyYY = np.meshgrid(maskRp,maskRey)
+    eta = np.multiply(eta,maskRpXX)
+    eta = np.multiply(eta,maskReyYY)
 
     return rp,Rey,eta
-    
-    
-    
-    
-    
-        
