@@ -38,6 +38,12 @@ waterDensityDefault='998.2' #[kg/m3] @ 20C
 waterViscosityDefault='1.002E-3' #[(N s)/m2] @ 20C
 
 def calculate(*args):
+    Stokes.set('')
+    StokesCritical.set('')
+    captureEfficiency.set('')
+    particleFlux.set('')
+    particleCaptureRate.set('')
+    
     try:
 
         #unit variables Section calculations
@@ -45,6 +51,7 @@ def calculate(*args):
             Uh=float(upstreamVelocity.get())
             Dch=float(collectorDiameter.get())
             rhoh=float(fluidDensity.get())
+            rhoPh=float(rhoh)
             muh=float(fluidViscosity.get())
             Dph=float(particleDiameter.get())
             Reynolds.set(format(Uh*Dch*rhoh/muh,floatOutFormat))
@@ -53,17 +60,23 @@ def calculate(*args):
         #dimensionLess Section calculations
         Reh=float(Reynolds.get())
         rph=float(particleSizeRatio.get())
-        etah=0.0
+        etah=float(0.0)
+        Sth=float(Reh*(rph**2)/9.0)
+        StCrith=float(1.0)
+        Stokes.set(format(Sth,floatOutFormat))
+        StokesCritical.set(format(StCrith,floatOutFormat))
         if Reh > 1000.0 or Reh < 0.0:
-            messagebox.showerror("Reynolds Number error","Your input corresponds to a Reynolds Number Rey=%10.3E which is out of the valid range: [0,1000]. Capture efficiency cannot be estimated." % Reh)
+            messagebox.showerror("Reynolds Number error","Your input corresponds to a Reynolds Number Rey=%10.3E which is out of the valid range: [0,1000]. Capture efficiency by DI cannot be estimated." % Reh)
         elif rph > 1.5 or rph < 0.0:
-            messagebox.showerror("Particle Size Ratio error","Your input corresponds to a Particle Size Ratio rp=%10.3E which is out of the valid range: [0,1.5]. Capture efficiency cannot be estimated." % rph)
+            messagebox.showerror("Particle Size Ratio error","Your input corresponds to a Particle Size Ratio rp=%10.3E which is out of the valid range: [0,1.5]. Capture efficiency by DI cannot be estimated." % rph)
+        elif Sth > StCrith:
+            messagebox.showerror("Stokes Number error","Your input corresponds to a Reynolds Number Rey=%10.3E and a Particle Size Ratio rp=%10.3E. This parameters give a Stokes number St=%10.3E which is above the critical value for this Reynolds number, St,crit=%10.3E. Capture efficiency by DI cannot be estimated." % (Reh,rph,Sth,StCrith))    
         else:
             try:
                 (rpArr,ReyArr,etaArr)=pyCaptureDB.captureEfficiencyDI(rp=rph,Rey=Reh)
                 etah=etaArr[0,0]
             except:
-                messagebox.showerror("Error within the function pyCaptureDB.captureEfficiencyDI", "The function pyCaptureDB.captureEfficiencyDI has returned an error. Capture efficiency cannot be estimated. Check the python console for more information")
+                messagebox.showerror("Error within the function pyCaptureDB.captureEfficiencyDI", "The function pyCaptureDB.captureEfficiencyDI has returned an error. Capture efficiency cannot be estimated. Check the python console for the error message given by the function")
             captureEfficiency.set(format(etah,floatOutFormat))
 
 
@@ -88,6 +101,8 @@ def reset():
     particleConcentration.set('')
     Reynolds.set('')
     particleSizeRatio.set('')
+    Stokes.set('')
+    StokesCritical.set('')
     captureEfficiency.set('')
     particleFlux.set('')
     particleCaptureRate.set('')
@@ -184,6 +199,8 @@ root.rowconfigure(0,weight=1)
 captureEfficiency=StringVar()
 Reynolds=StringVar()
 particleSizeRatio=StringVar()
+Stokes=StringVar()
+StokesCritical=StringVar()
 radioDLess=StringVar()
 dimensionlessActiveSec=IntVar()
 upstreamVelocity=StringVar()
@@ -207,7 +224,7 @@ reTitle_text=Message(mainframe,text=root.title())
 reTitle_text.configure(width=messageWidth,bg=titleBG)
 reTitle_text.grid(row=rowWindow,column=1,columnspan=2)
 
-#First Instructions row
+#Instructions row: Use of dimensional variables
 rowWindow+=1
 instructions2_text=Message(mainframe,text="To estimate capture efficiency from dimensional variables, fill in the following:")
 instructions2_text.configure(width=messageWidth,bg=instructionsBG)
@@ -248,9 +265,9 @@ fluidViscosity_label.grid(row=rowWindow,column=1,sticky=W)
 fluidViscosity_entry=tk.Entry(mainframe,width=16,textvariable=fluidViscosity,background=normalBG,state='normal')
 fluidViscosity_entry.grid(row=rowWindow,column=2,sticky=W)
 
-#Second Instructions row
+#Instructions row: Use of dynamic rates of capture
 rowWindow+=1
-instructions3_text=Message(mainframe,text="To estimate dynamic rates of capture, also fill in the following variables (and keep the chekcbox on):")
+instructions3_text=Message(mainframe,text="If you also want to estimate dynamic rates of capture, check-on the box below and fill in the following variables:")
 instructions3_text.configure(width=messageWidth,bg=instructionsBG)
 instructions3_text.grid(row=rowWindow,column=1,columnspan=2)
 
@@ -273,15 +290,15 @@ particleConcentration_label.grid(row=rowWindow,column=1,sticky=W)
 particleConcentration_entry=tk.Entry(mainframe,width=16,textvariable=particleConcentration,disabledforeground=disabledFG,disabledbackground=disabledBG,state='disabled')
 particleConcentration_entry.grid(row=rowWindow,column=2,sticky=W)
 
-#Third Instructions row
+#Instructions row: Use of DIMENSIONLESS parameters
 rowWindow+=1
-instructions1_text=Message(mainframe,text="To estimate capture efficiency only from DIMENSIONLESS parameters, fill in the following (and keep the checkbox on):")
+instructions1_text=Message(mainframe,text="To estimate capture efficiency just using DIMENSIONLESS parameters, check-on the box below and fill in the Reynolds number and the particle size ratio:")
 instructions1_text.configure(width=messageWidth,bg=instructionsBG)
 instructions1_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #Unit parameters check button row
 rowWindow+=1
-unit_check=ttk.Checkbutton(mainframe,variable=dimensionlessActiveSec,text="Only dimensionless", command=dimensionlessActive)
+unit_check=ttk.Checkbutton(mainframe,variable=dimensionlessActiveSec,text="Only use dimensionless parameters as input", command=dimensionlessActive)
 unit_check.grid(row=rowWindow,column=1,columnspan=2,sticky=N)
 
 #Settings for the "Reynolds" row
@@ -306,12 +323,24 @@ reset_button.grid(row=rowWindow,column=1,sticky=N)
 calc_button=ttk.Button(mainframe,text="Calculate",command=calculate)
 calc_button.grid(row=rowWindow,column=2,sticky=N)
 
+#Instructions row: Capture efficiency results
+rowWindow+=1
+instructions1_text=Message(mainframe,text="Capture efficiency:")
+instructions1_text.configure(width=messageWidth,bg=instructionsBG)
+instructions1_text.grid(row=rowWindow,column=1,columnspan=2)
+
 #Settings for the "captureEfficiency" row
 rowWindow+=1
 captureEfficiency_label=tk.Label(mainframe,text="Capture Efficiency [-]",background=answerBG,foreground=answerFG)
 captureEfficiency_label.grid(row=rowWindow,column=1,sticky=W)
 captureEfficiency_entry=tk.Entry(mainframe,width=16,textvariable=captureEfficiency,disabledforeground=answerFG,disabledbackground=answerBG,state='disabled')
 captureEfficiency_entry.grid(row=rowWindow,column=2,sticky=W)
+
+#Instructions row: Dynamic rates of capture
+rowWindow+=1
+instructions1_text=Message(mainframe,text="Dynamic rates of capture:")
+instructions1_text.configure(width=messageWidth,bg=instructionsBG)
+instructions1_text.grid(row=rowWindow,column=1,columnspan=2)
 
 #Settings for the "particleFlux" row
 rowWindow+=1
@@ -326,6 +355,27 @@ particleCaptureRate_label=tk.Label(mainframe,text="Particle Capture Rate [partic
 particleCaptureRate_label.grid(row=rowWindow,column=1,sticky=W)
 particleCaptureRate_entry=tk.Entry(mainframe,width=16,textvariable=particleCaptureRate,disabledforeground=disabledFG,disabledbackground=disabledBG,state='disabled')
 particleCaptureRate_entry.grid(row=rowWindow,column=2,sticky=W)
+
+#Instructions row: Check for correct Stokes number
+rowWindow+=1
+instructions1_text=Message(mainframe,text="For Direct Interception to apply, check that Stokes number is smaller than Critical Stokes:")
+instructions1_text.configure(width=messageWidth,bg=instructionsBG)
+instructions1_text.grid(row=rowWindow,column=1,columnspan=2)
+
+#Settings for the "Critical Stokes number" row
+rowWindow+=1
+StokesCritical_label=tk.Label(mainframe,text="Critical Stokes Number [-]",background=answerBG,foreground=answerFG)
+StokesCritical_label.grid(row=rowWindow,column=1,sticky=W)
+StokesCritical_entry=tk.Entry(mainframe,width=16,textvariable=StokesCritical,disabledforeground=answerFG,disabledbackground=answerBG,state='disabled')
+StokesCritical_entry.grid(row=rowWindow,column=2,sticky=W)
+
+#Settings for the "Stokes number" row
+rowWindow+=1
+Stokes_label=tk.Label(mainframe,text="Stokes Number [-]",background=answerBG,foreground=answerFG)
+Stokes_label.grid(row=rowWindow,column=1,sticky=W)
+Stokes_entry=tk.Entry(mainframe,width=16,textvariable=Stokes,disabledforeground=answerFG,disabledbackground=answerBG,state='disabled')
+Stokes_entry.grid(row=rowWindow,column=2,sticky=W)
+
 
 #Pretty stuff
 for child in mainframe.winfo_children(): child.grid_configure(padx=5,pady=5)
